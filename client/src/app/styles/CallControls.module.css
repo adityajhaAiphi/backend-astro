@@ -1,0 +1,53 @@
+.controlsContainer {
+  display: flex;
+  gap: 1rem;
+  justify-content: center;
+  padding: 1rem;
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.button {
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.startButton {
+  background: #4caf50;
+  color: white;
+}
+
+.startButton:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.endButton {
+  background: #f44336;
+  color: white;
+}
+
+.iconButton {
+  padding: 0.5rem;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  background: transparent;
+  color: #666;
+}
+
+.iconButton:hover {
+  background: #f5f5f5;
+}
+
+.iconButton.active {
+  color: #f44336;
+} 

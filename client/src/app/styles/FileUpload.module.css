@@ -1,0 +1,25 @@
+.fileUpload {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.uploadButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background-color: #f3f4f6;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.uploadButton:hover {
+  background-color: #e5e7eb;
+}
+
+.uploadButton:active {
+  background-color: #d1d5db;
+} 
