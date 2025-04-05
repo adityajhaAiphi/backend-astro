@@ -11,6 +11,7 @@ const superAdminRoutes = require("./src/routes/superadmin");
 const setupSocket = require("./socket/socket");
 const chatRoutes = require('./src/routes/chatRoutes');
 const consultationRoutes = require('./src/routes/consultations');
+const ordersRoutes = require('./src/routes/orders');
 const setupCallWebSocket = require('./src/routes/CallRoutes');
 dotenv.config();
 
@@ -26,10 +27,20 @@ for (const envVar of requiredEnvVars) {
   }
 }
 
+// Check for optional environment variables
+const optionalEnvVars = ['RAZORPAY_KEY_ID', 'RAZORPAY_KEY_SECRET'];
+for (const envVar of optionalEnvVars) {
+  if (!process.env[envVar]) {
+    console.warn(`Warning: Optional environment variable ${envVar} is not set. Payment features will be limited.`);
+  }
+}
+
 // Define allowed origins
 const allowedOrigins = [
   'https://astroalert-one.vercel.app',
   'https://astroalert.vercel.app',
+  'https://astroalert-local.vercel.app',
+  'https://astroalert-backend-m1hn.onrender.com',
   'http://localhost:3000',
   'http://localhost:3001'
 ];
@@ -81,8 +92,13 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
-// Initialize WebSocket servers BEFORE routes
+// Initialize Socket.IO for chat FIRST
+const io = setupSocket(server);
+console.log('🟢 Socket.IO server initialized for chat');
+
+// Initialize WebSocket for video calls
 const wss = setupCallWebSocket(server);
+console.log('🟢 WebSocket server initialized for video calls');
 
 // Add WebSocket upgrade handler with logging
 server.on('upgrade', (request, socket, head) => {
@@ -93,6 +109,13 @@ server.on('upgrade', (request, socket, head) => {
     host: request.headers.host
   });
 
+  // If the path is /socket.io, let Socket.IO handle it
+  if (pathname.startsWith('/socket.io')) {
+    // Socket.IO will handle its own upgrade
+    return;
+  }
+  
+  // Handle video call WebSocket
   if (pathname === '/calls') {
     // Add CORS check for WebSocket connections
     const origin = request.headers.origin;
@@ -121,6 +144,7 @@ app.use('/api/astrologers', astrologersRouter);
 app.use('/api/superadmin', superAdminRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/consultations', consultationRoutes);
+app.use('/api/orders', ordersRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
@@ -135,6 +159,7 @@ const PORT = process.env.PORT || 3001;
 server.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);
   console.log(`✅ CORS enabled for origins: ${allowedOrigins.join(', ')}`);
+  console.log(`🟢 Socket.IO server running on /socket.io`);
   console.log(`🟢 WebSocket server running on /calls`);
 });
 

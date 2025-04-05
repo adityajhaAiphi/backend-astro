@@ -32,7 +32,7 @@ const isAdmin = async (req, res, next) => {
     return res.status(401).json({ error: 'Unauthorized. User not found.' });
   }
 
-  if (req.user.role !== 'admin') {
+  if (req.user.role !== 'admin' && req.user.role !== 'superadmin') {
     console.log("❌ Access Denied. User is not an admin.");
     return res.status(403).json({ error: 'Access denied. Admin only.' });
   }
